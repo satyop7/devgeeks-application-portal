@@ -19,6 +19,8 @@ import {
   DialogContentText,
   DialogTitle,
   Alert,
+  Fade,
+  Zoom,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -34,6 +36,7 @@ const AdminDashboard = () => {
   const [postings, setPostings] = useState([]);
   const [deleteDialog, setDeleteDialog] = useState({ open: false, postingId: null });
   const [error, setError] = useState('');
+  const [hoveredCard, setHoveredCard] = useState(null);
 
   useEffect(() => {
     fetchPostings();
@@ -60,18 +63,30 @@ const AdminDashboard = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" component="h1" color="primary" gutterBottom>
-          Manage Internship Postings
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => navigate('/admin/create-posting')}
-        >
-          Create New Posting
-        </Button>
-      </Box>
+      <Fade in timeout={600}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2, mb: 4 }}>
+          <Typography
+            variant="h4"
+            component="h1"
+            sx={{
+              fontWeight: 700,
+              background: 'linear-gradient(45deg, #39FF14, #14FFE5)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            Manage Internship Postings
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => navigate('/admin/create-posting')}
+            sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+          >
+            Create New Posting
+          </Button>
+        </Box>
+      </Fade>
 
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
@@ -80,79 +95,154 @@ const AdminDashboard = () => {
       )}
 
       <Grid container spacing={3}>
-        {postings.map((posting) => (
-          <Grid item xs={12} md={6} lg={4} key={posting.id}>
-            <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography variant="h6" component="h2" gutterBottom>
-                  {posting.title}
-                </Typography>
+        {postings.map((posting, index) => (
+          <Grid item xs={12} sm={6} lg={4} key={posting.id}>
+            <Zoom in timeout={400 + index * 100}>
+              <Card
+                onMouseEnter={() => setHoveredCard(posting.id)}
+                onMouseLeave={() => setHoveredCard(null)}
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  position: 'relative',
+                  transform: hoveredCard === posting.id ? 'translateY(-8px)' : 'translateY(0)',
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: hoveredCard === posting.id
+                    ? '0 12px 40px rgba(57, 255, 20, 0.25)'
+                    : '0 4px 12px rgba(0, 0, 0, 0.5)',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 4,
+                    background: 'linear-gradient(90deg, #39FF14, #14FFE5)',
+                    opacity: hoveredCard === posting.id ? 1 : 0,
+                    transition: 'opacity 0.3s ease',
+                  },
+                }}
+              >
+                <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                  <Typography
+                    variant="h6"
+                    component="h2"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 700,
+                      color: hoveredCard === posting.id ? 'primary.light' : 'text.primary',
+                      transition: 'color 0.3s ease',
+                    }}
+                  >
+                    {posting.title}
+                  </Typography>
                 
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <BusinessIcon sx={{ mr: 1, fontSize: 18 }} />
-                  <Typography variant="body2" color="text.secondary">
-                    {posting.company || 'Company Name'}
-                  </Typography>
-                </Box>
-
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <LocationIcon sx={{ mr: 1, fontSize: 18 }} />
-                  <Typography variant="body2" color="text.secondary">
-                    {posting.location || 'Location'}
-                  </Typography>
-                </Box>
-
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <WorkIcon sx={{ mr: 1, fontSize: 18 }} />
-                  <Typography variant="body2" color="text.secondary">
-                    {posting.type || 'Full-time'}
-                  </Typography>
-                </Box>
-
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{
-                    mb: 2,
-                    display: '-webkit-box',
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                  }}
-                >
-                  {posting.description}
-                </Typography>
-
-                {posting.skills && posting.skills.length > 0 && (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
-                    {posting.skills.map((skill) => (
-                      <Chip
-                        key={skill}
-                        label={skill}
-                        size="small"
-                        sx={{ backgroundColor: 'primary.main', color: 'white' }}
-                      />
-                    ))}
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, gap: 1 }}>
+                    <BusinessIcon
+                      sx={{
+                        fontSize: 18,
+                        color: hoveredCard === posting.id ? 'primary.main' : 'text.secondary',
+                        transition: 'color 0.3s ease',
+                      }}
+                    />
+                    <Typography variant="body2" color="text.secondary">
+                      {posting.company || 'Company Name'}
+                    </Typography>
                   </Box>
-                )}
-              </CardContent>
 
-              <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}>
-                <Button
-                  size="small"
-                  startIcon={<VisibilityIcon />}
-                  onClick={() => navigate(`/admin/postings/${posting.id}/applications`)}
-                >
-                  View Applications
-                </Button>
-                <IconButton
-                  color="error"
-                  onClick={() => setDeleteDialog({ open: true, postingId: posting.id })}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </CardActions>
-            </Card>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, gap: 1 }}>
+                    <LocationIcon
+                      sx={{
+                        fontSize: 18,
+                        color: hoveredCard === posting.id ? 'primary.main' : 'text.secondary',
+                        transition: 'color 0.3s ease',
+                      }}
+                    />
+                    <Typography variant="body2" color="text.secondary">
+                      {posting.location || 'Location'}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
+                    <WorkIcon
+                      sx={{
+                        fontSize: 18,
+                        color: hoveredCard === posting.id ? 'secondary.main' : 'text.secondary',
+                        transition: 'color 0.3s ease',
+                      }}
+                    />
+                    <Typography variant="body2" color="text.secondary">
+                      {posting.type || 'Full-time'}
+                    </Typography>
+                  </Box>
+
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      mb: 2.5,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {posting.description}
+                  </Typography>
+
+                  {posting.skills && posting.skills.length > 0 && (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                      {posting.skills.map((skill) => (
+                        <Chip
+                          key={skill}
+                          label={skill}
+                          size="small"
+                          sx={{
+                            backgroundColor: hoveredCard === posting.id
+                              ? 'rgba(57, 255, 20, 0.15)'
+                              : 'rgba(255, 255, 255, 0.05)',
+                            color: hoveredCard === posting.id ? 'primary.light' : 'text.secondary',
+                            borderColor: hoveredCard === posting.id ? 'primary.main' : 'transparent',
+                            border: '1px solid',
+                            transition: 'all 0.3s ease',
+                            fontWeight: 500,
+                          }}
+                        />
+                      ))}
+                    </Box>
+                  )}
+                </CardContent>
+
+                <CardActions sx={{ justifyContent: 'space-between', px: 3, pb: 3 }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<VisibilityIcon />}
+                    onClick={() => navigate(`/admin/postings/${posting.id}/applications`)}
+                    sx={{ flex: 1 }}
+                  >
+                    View Applications
+                  </Button>
+                  <IconButton
+                    color="error"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeleteDialog({ open: true, postingId: posting.id });
+                    }}
+                    sx={{
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'scale(1.1)',
+                      },
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </CardActions>
+              </Card>
+            </Zoom>
           </Grid>
         ))}
       </Grid>
