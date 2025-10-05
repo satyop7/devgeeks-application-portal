@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
   Box,
-  Container,
   Grid,
   Card,
   CardContent,
@@ -15,8 +14,16 @@ import {
   Paper,
   Fade,
   Zoom,
+  Divider,
 } from '@mui/material';
-import { Work, LocationOn, ArrowForward } from '@mui/icons-material';
+import {
+  Work,
+  LocationOn,
+  ArrowForward,
+  Business,
+  Payments,
+  CheckCircleOutline,
+} from '@mui/icons-material';
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
@@ -42,13 +49,13 @@ const JobList = () => {
     return (
       <Grid container spacing={3}>
         {[1, 2, 3].map((n) => (
-          <Grid item xs={12} sm={6} lg={4} key={n}>
-            <Card sx={{ height: 350 }}>
+          <Grid item xs={12} md={6} lg={4} key={n}>
+            <Card sx={{ height: 450 }}>
               <CardContent>
                 <Skeleton variant="rectangular" height={30} sx={{ mb: 2, borderRadius: 1 }} />
                 <Skeleton variant="text" height={20} width="60%" sx={{ mb: 2 }} />
                 <Skeleton variant="text" height={20} width="50%" sx={{ mb: 3 }} />
-                <Skeleton variant="rectangular" height={80} sx={{ mb: 2, borderRadius: 1 }} />
+                <Skeleton variant="rectangular" height={100} sx={{ mb: 2, borderRadius: 1 }} />
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <Skeleton variant="rectangular" width={60} height={24} sx={{ borderRadius: 1 }} />
                   <Skeleton variant="rectangular" width={70} height={24} sx={{ borderRadius: 1 }} />
@@ -89,7 +96,7 @@ const JobList = () => {
 
       <Grid container spacing={3}>
         {jobs.map((job, index) => (
-          <Grid item xs={12} sm={6} lg={4} key={job.id}>
+          <Grid item xs={12} md={6} lg={4} key={job.id}>
             <Zoom in timeout={300 + index * 100}>
               <Card
                 onMouseEnter={() => setHoveredCard(job.id)}
@@ -121,51 +128,88 @@ const JobList = () => {
                 onClick={() => navigate(`/apply/${job.id}`)}
               >
                 <CardContent sx={{ flexGrow: 1, p: 3 }}>
-                  <Typography
-                    variant="h5"
-                    component="h3"
-                    gutterBottom
-                    sx={{
-                      fontWeight: 700,
-                      mb: 2,
-                      color: hoveredCard === job.id ? 'primary.light' : 'text.primary',
-                      transition: 'color 0.3s ease',
-                    }}
-                  >
-                    {job.title}
-                  </Typography>
-
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, gap: 1 }}>
-                    <LocationOn
-                      fontSize="small"
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                    <Typography
+                      variant="h5"
+                      component="h3"
                       sx={{
-                        color: hoveredCard === job.id ? 'primary.main' : 'text.secondary',
+                        fontWeight: 700,
+                        color: hoveredCard === job.id ? 'primary.light' : 'text.primary',
                         transition: 'color 0.3s ease',
+                        flex: 1,
                       }}
-                    />
-                    <Typography variant="body2" color="text.secondary">
-                      {job.location || 'Remote'}
+                    >
+                      {job.title}
                     </Typography>
+                    {job.salary && (
+                      <Chip
+                        icon={<Payments sx={{ fontSize: 16 }} />}
+                        label={job.salary}
+                        size="small"
+                        sx={{
+                          backgroundColor: hoveredCard === job.id
+                            ? 'rgba(57, 255, 20, 0.2)'
+                            : 'rgba(57, 255, 20, 0.1)',
+                          color: 'primary.light',
+                          fontWeight: 600,
+                          border: '1px solid',
+                          borderColor: hoveredCard === job.id ? 'primary.main' : 'transparent',
+                          transition: 'all 0.3s ease',
+                        }}
+                      />
+                    )}
                   </Box>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
-                    <Work
-                      fontSize="small"
-                      sx={{
-                        color: hoveredCard === job.id ? 'secondary.main' : 'text.secondary',
-                        transition: 'color 0.3s ease',
-                      }}
-                    />
-                    <Typography variant="body2" color="text.secondary">
-                      {job.type || 'Full-time'}
-                    </Typography>
+                  <Box sx={{ mb: 2.5 }}>
+                    {job.company && (
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, gap: 1 }}>
+                        <Business
+                          fontSize="small"
+                          sx={{
+                            color: hoveredCard === job.id ? 'primary.main' : 'text.secondary',
+                            transition: 'color 0.3s ease',
+                          }}
+                        />
+                        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+                          {job.company}
+                        </Typography>
+                      </Box>
+                    )}
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, gap: 1 }}>
+                      <LocationOn
+                        fontSize="small"
+                        sx={{
+                          color: hoveredCard === job.id ? 'primary.main' : 'text.secondary',
+                          transition: 'color 0.3s ease',
+                        }}
+                      />
+                      <Typography variant="body2" color="text.secondary">
+                        {job.location || 'Remote'}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Work
+                        fontSize="small"
+                        sx={{
+                          color: hoveredCard === job.id ? 'secondary.main' : 'text.secondary',
+                          transition: 'color 0.3s ease',
+                        }}
+                      />
+                      <Typography variant="body2" color="text.secondary">
+                        {job.type || 'Full-time'}
+                      </Typography>
+                    </Box>
                   </Box>
+
+                  <Divider sx={{ my: 2, borderColor: 'rgba(255, 255, 255, 0.08)' }} />
 
                   <Typography
                     variant="body2"
                     color="text.secondary"
                     sx={{
-                      mb: 2.5,
+                      mb: 2,
                       display: '-webkit-box',
                       WebkitLineClamp: 3,
                       WebkitBoxOrient: 'vertical',
@@ -177,9 +221,45 @@ const JobList = () => {
                     {job.description}
                   </Typography>
 
+                  {job.requirements && (
+                    <Box sx={{ mb: 2.5 }}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 0.5,
+                          color: 'text.secondary',
+                          fontWeight: 600,
+                          mb: 1,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px',
+                        }}
+                      >
+                        <CheckCircleOutline sx={{ fontSize: 14 }} />
+                        Key Requirements
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          lineHeight: 1.5,
+                          fontSize: '0.85rem',
+                        }}
+                      >
+                        {job.requirements}
+                      </Typography>
+                    </Box>
+                  )}
+
                   {job.skills && (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                      {job.skills.split(',').slice(0, 4).map((skill, index) => (
+                      {job.skills.split(',').slice(0, 5).map((skill, index) => (
                         <Chip
                           key={index}
                           label={skill.trim()}
@@ -193,17 +273,19 @@ const JobList = () => {
                             border: '1px solid',
                             transition: 'all 0.3s ease',
                             fontWeight: 500,
+                            fontSize: '0.75rem',
                           }}
                         />
                       ))}
-                      {job.skills.split(',').length > 4 && (
+                      {job.skills.split(',').length > 5 && (
                         <Chip
-                          label={`+${job.skills.split(',').length - 4}`}
+                          label={`+${job.skills.split(',').length - 5}`}
                           size="small"
                           sx={{
                             backgroundColor: 'rgba(255, 255, 255, 0.05)',
                             color: 'text.secondary',
                             fontWeight: 500,
+                            fontSize: '0.75rem',
                           }}
                         />
                       )}
