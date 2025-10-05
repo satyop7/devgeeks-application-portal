@@ -56,10 +56,14 @@ app.post('/api/admin/login', async (req, res) => {
 
 
 app.post('/api/admin/postings', async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, company, location, type, requirements, skills, salary } = req.body;
+  const skillsString = skills;
 
   try {
-    const result = await pool.query('INSERT INTO postings (title, description) VALUES ($1, $2) RETURNING *', [title, description]);
+    const result = await pool.query(
+      'INSERT INTO postings (title, description, company_name, location, type, requirements, skills, stipend) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+      [title, description, company, location, type, requirements, skillsString, salary]
+    );
     res.json(result.rows[0]);
   } catch (error) {
     console.error(error);

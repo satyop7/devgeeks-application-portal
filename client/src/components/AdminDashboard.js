@@ -147,7 +147,7 @@ const AdminDashboard = () => {
                       }}
                     />
                     <Typography variant="body2" color="text.secondary">
-                      {posting.company || 'Company Name'}
+                      {posting.company_name || 'Company Name'}
                     </Typography>
                   </Box>
 
@@ -192,28 +192,19 @@ const AdminDashboard = () => {
                     {posting.description}
                   </Typography>
 
-                  {posting.skills && posting.skills.length > 0 && (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                      {posting.skills.map((skill) => (
-                        <Chip
-                          key={skill}
-                          label={skill}
-                          size="small"
-                          sx={{
-                            backgroundColor: hoveredCard === posting.id
-                              ? 'rgba(57, 255, 20, 0.15)'
-                              : 'rgba(255, 255, 255, 0.05)',
-                            color: hoveredCard === posting.id ? 'primary.light' : 'text.secondary',
-                            borderColor: hoveredCard === posting.id ? 'primary.main' : 'transparent',
-                            border: '1px solid',
-                            transition: 'all 0.3s ease',
-                            fontWeight: 500,
-                          }}
-                        />
-                      ))}
-                    </Box>
-                  )}
-                </CardContent>
+                {posting.skills && (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
+                    {posting.skills.split(',').map((skill) => (
+                      <Chip
+                        key={skill}
+                        label={skill.trim()}
+                        size="small"
+                        sx={{ backgroundColor: 'primary.main', color: 'white' }}
+                      />
+                    ))}
+                  </Box>
+                )}
+              </CardContent>
 
                 <CardActions sx={{ justifyContent: 'space-between', px: 3, pb: 3 }}>
                   <Button

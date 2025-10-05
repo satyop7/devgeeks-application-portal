@@ -27,35 +27,17 @@ const CreateJobPosting = () => {
     type: 'Full-time',
     description: '',
     requirements: '',
-    skills: [],
+    skills: '',
     salary: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [newSkill, setNewSkill] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
-    }));
-  };
-
-  const handleAddSkill = () => {
-    if (newSkill && !formData.skills.includes(newSkill)) {
-      setFormData(prev => ({
-        ...prev,
-        skills: [...prev.skills, newSkill]
-      }));
-      setNewSkill('');
-    }
-  };
-
-  const handleRemoveSkill = (skillToRemove) => {
-    setFormData(prev => ({
-      ...prev,
-      skills: prev.skills.filter(skill => skill !== skillToRemove)
     }));
   };
 
@@ -177,31 +159,14 @@ const CreateJobPosting = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Box sx={{ mb: 2 }}>
-                <TextField
-                  fullWidth
-                  label="Add Skills"
-                  value={newSkill}
-                  onChange={(e) => setNewSkill(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddSkill();
-                    }
-                  }}
-                  placeholder="Type a skill and press Enter"
-                />
-              </Box>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {formData.skills.map((skill) => (
-                  <Chip
-                    key={skill}
-                    label={skill}
-                    onDelete={() => handleRemoveSkill(skill)}
-                    color="primary"
-                  />
-                ))}
-              </Box>
+              <TextField
+                fullWidth
+                label="Skills"
+                name="skills"
+                value={formData.skills}
+                onChange={handleChange}
+                placeholder="Enter skills, separated by commas"
+              />
             </Grid>
 
             <Grid item xs={12}>
