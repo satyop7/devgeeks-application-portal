@@ -39,8 +39,13 @@ const AdminDashboard = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
 
   useEffect(() => {
-    fetchPostings();
-  }, []);
+    const isLoggedIn = localStorage.getItem('isAdminLoggedIn');
+    if (!isLoggedIn) {
+      navigate('/admin');
+    } else {
+      fetchPostings();
+    }
+  }, [navigate]);
 
   const fetchPostings = async () => {
     try {

@@ -60,6 +60,7 @@ const AdminLogin = () => {
     setLoading(true);
     try {
       await axios.post('/api/admin/login', formData);
+      localStorage.setItem('isAdminLoggedIn', 'true');
       navigate('/admin/dashboard');
     } catch (error) {
       setError(
