@@ -180,10 +180,10 @@ const JobList = () => {
       Posted 2 days ago
       </Typography>
       </Box>
-      {job.salary && (
+      {job.stipend && (
         <Chip
         icon={<Payments sx={{ fontSize: 16 }} />}
-        label={job.salary}
+        label={job.stipend}
         size="small"
         sx={{
           backgroundColor: hoveredCard === job.id
@@ -211,7 +211,7 @@ const JobList = () => {
       }}
       >
       <Business sx={{ fontSize: 16 }} />
-      {job.company || 'Company'}
+      {job.company_name || 'Company'}
       </Typography>
       <Typography variant="body2" sx={{ color: 'text.disabled' }}>•</Typography>
       <Typography
